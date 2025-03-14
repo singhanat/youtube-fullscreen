@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Live YouTube Fullscreen</title>
+    <title>Fullscreen YouTube Video</title>
     <style>
         * {
             margin: 0;
@@ -30,12 +30,25 @@
             border: none;
         }
     </style>
+    <script>
+        async function loadVideo() {
+            try {
+                const response = await fetch('https://singhanat.github.io/youtube-fullscreen/url.txt'); // เปลี่ยน URL เป็นไฟล์ออนไลน์ที่มี YouTube Video ID
+                const url = await response.text();
+                document.getElementById('youtubePlayer').src = `${url.trim()}?autoplay=1&mute=1&controls=0&showinfo=0&modestbranding=1&rel=0`;
+            } catch (error) {
+                console.error('Error loading video:', error);
+            }
+        }
+        window.onload = loadVideo;
+    </script>
 </head>
 <body>
     <div class="container">
         <iframe 
-            src="https://www.youtube.com/embed/3hi7yAkeZRg?autoplay=1&mute=1&controls=0&showinfo=0&modestbranding=1&rel=0" 
-            allow="autoplay; fullscreen"
+            id="youtubePlayer"
+            src="" 
+            allow="autoplay; fullscreen" 
             allowfullscreen>
         </iframe>
     </div>
