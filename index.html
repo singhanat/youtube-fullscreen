@@ -33,9 +33,35 @@
     <script>
         async function loadVideo() {
             try {
-                const response = await fetch('https://singhanat.github.io/youtube-fullscreen/url.txt'); // เปลี่ยน URL เป็นไฟล์ออนไลน์ที่มี YouTube Video ID
-                const url = await response.text();
-                document.getElementById('youtubePlayer').src = `${url.trim()}?autoplay=1&mute=1&controls=0&showinfo=0&modestbranding=1&rel=0`;
+                const response = await fetch('https://singhanat.github.io/youtube-fullscreen/url.txt');
+                let url = await response.text();
+                url = url.trim();
+
+                let videoId = null;
+                let isLive = false;
+
+                // ตรวจสอบว่ามีพารามิเตอร์ v= หรือไม่
+                const urlParams = new URLSearchParams(new URL(url).search);
+                if (urlParams.has('v')) {
+                    videoId = urlParams.get('v');
+                } else if (url.includes('live') || url.includes('/live/')) {
+                    isLive = true;
+                }
+
+                let embedUrl = '';
+                if (videoId) {
+                    // เป็นวิดีโอปกติ (VDO)
+                    embedUrl = `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&controls=0&showinfo=0&modestbranding=1&rel=0&loop=1&playlist=${videoId}`;
+                } else if (isLive) {
+                    // เป็น Live Stream (ไม่มี loop)
+                    embedUrl = `https://www.youtube.com/embed/live_stream?channel=${urlParams.get('channel') || 'default'}&autoplay=1&mute=1&controls=0&showinfo=0&modestbranding=1&rel=0`;
+                } else {
+                    // กรณี URL ไม่ถูกต้อง
+                    console.error('Invalid YouTube URL');
+                    return;
+                }
+
+                document.getElementById('youtubePlayer').src = embedUrl;
             } catch (error) {
                 console.error('Error loading video:', error);
             }
