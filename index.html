@@ -31,8 +31,8 @@
         }
     </style>
     <script>
-        let player;
         let currentUrl = '';
+        let player;
         
         async function loadVideo(forceReload = false) {
             try {
@@ -66,7 +66,11 @@
                 }
                 
                 document.getElementById('youtubePlayer').src = embedUrl;
-                initYouTubePlayer();
+                if (player) {
+                    player.loadVideoByUrl(embedUrl);
+                } else {
+                    initYouTubePlayer();
+                }
             } catch (error) {
                 console.error('Error loading video:', error);
             }
@@ -74,20 +78,20 @@
         
         function onPlayerStateChange(event) {
             if (event.data === 0) { // วิดีโอจบ (0 คือ YT.PlayerState.ENDED)
-                loadVideo(true); // บังคับโหลดวิดีโอใหม่
+                loadVideo(true); // โหลดวิดีโอใหม่
             }
         }
         
         function initYouTubePlayer() {
-            if (typeof YT !== 'undefined' && YT.Player) {
-                player = new YT.Player('youtubePlayer', {
-                    events: {
-                        'onStateChange': onPlayerStateChange
-                    }
-                });
-            } else {
-                setTimeout(initYouTubePlayer, 500);
-            }
+            player = new YT.Player('youtubePlayer', {
+                events: {
+                    'onStateChange': onPlayerStateChange
+                }
+            });
+        }
+        
+        function onYouTubeIframeAPIReady() {
+            initYouTubePlayer();
         }
         
         window.onload = function() {
