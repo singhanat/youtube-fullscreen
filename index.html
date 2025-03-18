@@ -35,7 +35,7 @@
 
         async function loadVideo() {
             try {
-                const response = await fetch('https://singhanat.github.io/youtube-fullscreen/url.txt');
+                const response = await fetch('https://singhanat.github.io/youtube-fullscreen/url.txt?t=${Date.now()}');
                 let url = await response.text();
                 url = url.trim();
 
